@@ -42,29 +42,10 @@ const ui = {
 let page = 1
 let matches = books
 
-const starting = document.createDocumentFragment()
-
-for (const { author, id, image, title } of matches.slice(0, BOOKS_PER_PAGE)) {
-    const element = document.createElement('button')
-    element.classList = 'preview'
-    element.setAttribute('data-preview', id)
-
-    element.innerHTML = `
-        <img
-            class="preview__image"
-            src="${image}"
-        />
-        
-        <div class="preview__info">
-            <h3 class="preview__title">${title}</h3>
-            <div class="preview__author">${authors[author]}</div>
-        </div>
-    `
-
-    starting.appendChild(element)
-}
-
-ui.itemsList.appendChild(starting)
+// Generate a list of books from initial data
+ui.itemsList.appendChild(
+    generateBookListFragment(matches, 0, BOOKS_PER_PAGE)
+)
 
 const genreHtml = document.createDocumentFragment()
 const firstGenreElement = document.createElement('option')
@@ -183,30 +164,12 @@ ui.search.form.addEventListener('submit', (event) => {
         ui.searchEmptyMessage.classList.remove('list__message_show')
     }
 
+    // Clear booklist and generate a new set from results
     ui.itemsList.innerHTML = ''
-    const newItems = document.createDocumentFragment()
+    ui.itemsList.appendChild(
+        generateBookListFragment(result, 0, BOOKS_PER_PAGE)
+    )
 
-    for (const { author, id, image, title } of result.slice(0, BOOKS_PER_PAGE)) {
-        const element = document.createElement('button')
-        element.classList = 'preview'
-        element.setAttribute('data-preview', id)
-    
-        element.innerHTML = `
-            <img
-                class="preview__image"
-                src="${image}"
-            />
-            
-            <div class="preview__info">
-                <h3 class="preview__title">${title}</h3>
-                <div class="preview__author">${authors[author]}</div>
-            </div>
-        `
-
-        newItems.appendChild(element)
-    }
-
-    ui.itemsList.appendChild(newItems)
     ui.showMoreButton.disabled = (matches.length - (page * BOOKS_PER_PAGE)) < 1
 
     ui.showMoreButton.innerHTML = `
@@ -219,29 +182,11 @@ ui.search.form.addEventListener('submit', (event) => {
 })
 
 ui.showMoreButton.addEventListener('click', () => {
-    const fragment = document.createDocumentFragment()
 
-    for (const { author, id, image, title } of matches.slice(page * BOOKS_PER_PAGE, (page + 1) * BOOKS_PER_PAGE)) {
-        const element = document.createElement('button')
-        element.classList = 'preview'
-        element.setAttribute('data-preview', id)
-    
-        element.innerHTML = `
-            <img
-                class="preview__image"
-                src="${image}"
-            />
-            
-            <div class="preview__info">
-                <h3 class="preview__title">${title}</h3>
-                <div class="preview__author">${authors[author]}</div>
-            </div>
-        `
-
-        fragment.appendChild(element)
-    }
-
-    ui.itemsList.appendChild(fragment)
+    // Add the next page of books 
+    ui.itemsList.appendChild(
+        generateBookListFragment(matches, page * BOOKS_PER_PAGE, (page + 1) * BOOKS_PER_PAGE)
+    )
     page += 1
 })
 
@@ -273,3 +218,33 @@ ui.itemsList.addEventListener('click', (event) => {
         ui.bookDisplay.description.innerText = active.description
     }
 })
+
+function generateBookListFragment(arrayOfBooks, startIndex, endIndex){
+    /* 
+      Generate a list of book display components from a section of an array 
+      containing book objects
+    */
+    const container = document.createDocumentFragment()
+
+    for (const { author, id, image, title } of arrayOfBooks.slice(startIndex, endIndex)) {
+        const element = document.createElement('button')
+        element.classList = 'preview'
+        element.setAttribute('data-preview', id)
+
+        element.innerHTML = `
+            <img
+                class="preview__image"
+                src="${image}"
+            />
+            
+            <div class="preview__info">
+                <h3 class="preview__title">${title}</h3>
+                <div class="preview__author">${authors[author]}</div>
+            </div>
+        `
+
+        container.appendChild(element)
+    }
+
+    return container
+}
