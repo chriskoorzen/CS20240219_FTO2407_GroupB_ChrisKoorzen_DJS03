@@ -39,7 +39,7 @@ const ui = {
     },
 }
 
-let page = 1;
+let page = 1
 let matches = books
 
 const starting = document.createDocumentFragment()
@@ -98,12 +98,12 @@ ui.search.authorSelector.appendChild(authorsHtml)
 
 if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
     ui.settings.themeSelector.value = 'night'
-    document.documentElement.style.setProperty('--color-dark', '255, 255, 255');
-    document.documentElement.style.setProperty('--color-light', '10, 10, 20');
+    document.documentElement.style.setProperty('--color-dark', '255, 255, 255')
+    document.documentElement.style.setProperty('--color-light', '10, 10, 20')
 } else {
     ui.settings.themeSelector.value = 'day'
-    document.documentElement.style.setProperty('--color-dark', '10, 10, 20');
-    document.documentElement.style.setProperty('--color-light', '255, 255, 255');
+    document.documentElement.style.setProperty('--color-dark', '10, 10, 20')
+    document.documentElement.style.setProperty('--color-light', '255, 255, 255')
 }
 
 ui.showMoreButton.innerText = `Show more (${books.length - BOOKS_PER_PAGE})`
@@ -141,11 +141,11 @@ ui.settings.form.addEventListener('submit', (event) => {
     const { theme } = Object.fromEntries(formData)
 
     if (theme === 'night') {
-        document.documentElement.style.setProperty('--color-dark', '255, 255, 255');
-        document.documentElement.style.setProperty('--color-light', '10, 10, 20');
+        document.documentElement.style.setProperty('--color-dark', '255, 255, 255')
+        document.documentElement.style.setProperty('--color-light', '10, 10, 20')
     } else {
-        document.documentElement.style.setProperty('--color-dark', '10, 10, 20');
-        document.documentElement.style.setProperty('--color-light', '255, 255, 255');
+        document.documentElement.style.setProperty('--color-dark', '10, 10, 20')
+        document.documentElement.style.setProperty('--color-light', '255, 255, 255')
     }
     
     ui.settings.modal.open = false
@@ -161,7 +161,7 @@ ui.search.form.addEventListener('submit', (event) => {
         let genreMatch = filters.genre === 'any'
 
         for (const singleGenre of book.genres) {
-            if (genreMatch) break;
+            if (genreMatch) break
             if (singleGenre === filters.genre) { genreMatch = true }
         }
 
@@ -174,7 +174,7 @@ ui.search.form.addEventListener('submit', (event) => {
         }
     }
 
-    page = 1;
+    page = 1
     matches = result
 
     if (result.length < 1) {
@@ -214,7 +214,7 @@ ui.search.form.addEventListener('submit', (event) => {
         <span class="list__remaining"> (${(matches.length - (page * BOOKS_PER_PAGE)) > 0 ? (matches.length - (page * BOOKS_PER_PAGE)) : 0})</span>
     `
 
-    window.scrollTo({top: 0, behavior: 'smooth'});
+    window.scrollTo({top: 0, behavior: 'smooth'})
     ui.search.modal.open = false
 })
 
@@ -256,7 +256,7 @@ ui.itemsList.addEventListener('click', (event) => {
             let result = null
     
             for (const singleBook of books) {
-                if (result) break;
+                if (result) break
                 if (singleBook.id === node?.dataset?.preview) result = singleBook
             } 
         
