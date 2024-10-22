@@ -39,7 +39,13 @@ const ui = {
     },
 }
 
+/* Do not load all book objects at once, but "page"
+   through them at user's request. Keep track of 
+   current "page" location. */
 let page = 0
+
+/* Reference to current array of book objects. 
+   Initialize with entire "book" data array. */
 let matches = books
 
 // Generate a list of books from initial data
@@ -155,7 +161,7 @@ ui.search.form.addEventListener('submit', (event) => {
         ui.searchEmptyMessage.classList.remove('list__message_show')
     }
 
-    loadNextPageOfBooks(result)
+    loadNextPageOfBooks(result)                     // Load from results
 
     window.scrollTo({top: 0, behavior: 'smooth'})   // Go back to top of page
     ui.search.modal.open = false
