@@ -51,35 +51,13 @@ let matches = books
 // Generate a list of books from initial data
 loadNextPageOfBooks(matches)
 
-const genreHtml = document.createDocumentFragment()
-const firstGenreElement = document.createElement('option')
-firstGenreElement.value = 'any'
-firstGenreElement.innerText = 'All Genres'
-genreHtml.appendChild(firstGenreElement)
-
-for (const [id, name] of Object.entries(genres)) {
-    const element = document.createElement('option')
-    element.value = id
-    element.innerText = name
-    genreHtml.appendChild(element)
-}
-
-ui.search.genreSelector.appendChild(genreHtml)
-
-const authorsHtml = document.createDocumentFragment()
-const firstAuthorElement = document.createElement('option')
-firstAuthorElement.value = 'any'
-firstAuthorElement.innerText = 'All Authors'
-authorsHtml.appendChild(firstAuthorElement)
-
-for (const [id, name] of Object.entries(authors)) {
-    const element = document.createElement('option')
-    element.value = id
-    element.innerText = name
-    authorsHtml.appendChild(element)
-}
-
-ui.search.authorSelector.appendChild(authorsHtml)
+// Generate filter options from "authors" and "genres" arrays
+ui.search.genreSelector.appendChild(
+    generateFilterOptionsFragment(genres, {value: "any", innerText: "All Genres"})
+)
+ui.search.authorSelector.appendChild(
+    generateFilterOptionsFragment(authors, {value: "any", innerText: "All Authors"})
+)
 
 // Check if user's browser requests "dark mode" by default
 if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
@@ -208,6 +186,28 @@ ui.itemsList.addEventListener('click', (event) => {
         ui.bookDisplay.description.innerText = active.description
     }
 })
+
+function generateFilterOptionsFragment(dataArray, defaultFirstValueProperties=null){
+    const container = document.createDocumentFragment()
+
+    if (defaultFirstValueProperties){
+        container.appendChild(
+            Object.assign(
+                document.createElement('option'),
+                defaultFirstValueProperties
+            )
+        )
+    }
+
+    for (const [id, name] of Object.entries(dataArray)) {
+        const element = document.createElement('option')
+        element.value = id
+        element.innerText = name
+        container.appendChild(element)
+    }
+
+    return container
+}
 
 function generateBookListFragment(arrayOfBooks, startIndex, endIndex){
     /* 
