@@ -62,12 +62,10 @@ ui.search.authorSelector.appendChild(
 // Check if user's browser requests "dark mode" by default
 if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
     ui.settings.themeSelector.value = 'night'
-    document.documentElement.style.setProperty('--color-dark', '255, 255, 255')
-    document.documentElement.style.setProperty('--color-light', '10, 10, 20')
+    toggleDisplayMode('night')
 } else {
     ui.settings.themeSelector.value = 'day'
-    document.documentElement.style.setProperty('--color-dark', '10, 10, 20')
-    document.documentElement.style.setProperty('--color-light', '255, 255, 255')
+    toggleDisplayMode('day')
 }
 
 ui.search.cancelButton.addEventListener('click', () => {
@@ -96,14 +94,8 @@ ui.settings.form.addEventListener('submit', (event) => {
     const formData = new FormData(event.target)
     const { theme } = Object.fromEntries(formData)
 
-    if (theme === 'night') {
-        document.documentElement.style.setProperty('--color-dark', '255, 255, 255')
-        document.documentElement.style.setProperty('--color-light', '10, 10, 20')
-    } else {
-        document.documentElement.style.setProperty('--color-dark', '10, 10, 20')
-        document.documentElement.style.setProperty('--color-light', '255, 255, 255')
-    }
-    
+    toggleDisplayMode(theme)
+
     ui.settings.modal.open = false
 })
 
@@ -186,6 +178,16 @@ ui.itemsList.addEventListener('click', (event) => {
         ui.bookDisplay.description.innerText = active.description
     }
 })
+
+function toggleDisplayMode(mode){
+    if (mode === 'night') {
+        document.documentElement.style.setProperty('--color-dark', '255, 255, 255')
+        document.documentElement.style.setProperty('--color-light', '10, 10, 20')
+    } else if (mode === 'day'){
+        document.documentElement.style.setProperty('--color-dark', '10, 10, 20')
+        document.documentElement.style.setProperty('--color-light', '255, 255, 255')
+    }
+}
 
 function generateFilterOptionsFragment(dataArray, defaultFirstValueProperties=null){
     const container = document.createDocumentFragment()
