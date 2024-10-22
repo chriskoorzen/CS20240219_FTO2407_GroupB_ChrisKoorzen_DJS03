@@ -48,26 +48,9 @@ let globalPage = 0
    Initialize with entire "book" data array. */
 let globalMatches = books
 
-// Load some books for display
-loadNextPageOfBooks()
 
-// Generate filter options from "authors" and "genres" arrays
-ui.search.genreSelector.appendChild(
-    generateFilterOptionsFragment(genres, {value: "any", innerText: "All Genres"})
-)
-ui.search.authorSelector.appendChild(
-    generateFilterOptionsFragment(authors, {value: "any", innerText: "All Authors"})
-)
-
-// Check if user's browser requests "dark mode" by default
-if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-    ui.settings.themeSelector.value = 'night'
-    toggleDisplayMode('night')
-} else {
-    ui.settings.themeSelector.value = 'day'
-    toggleDisplayMode('day')
-}
-
+/* ----- START: Setup app component functionality ----- */
+// --- Basic functionality ---
 ui.search.cancelButton.addEventListener('click', () => {
     ui.search.modal.open = false
 })
@@ -89,6 +72,7 @@ ui.bookDisplay.closeButton.addEventListener('click', () => {
     ui.bookDisplay.modal.open = false
 })
 
+// --- Process user inputs ---
 ui.settings.form.addEventListener('submit', (event) => {
     event.preventDefault()
     const formData = new FormData(event.target)
@@ -137,11 +121,13 @@ ui.search.form.addEventListener('submit', (event) => {
     ui.search.modal.open = false
 })
 
+// Method to load more books onto the UI
 ui.showMoreButton.addEventListener('click', () => {
     globalPage += 1            // Increment global variable
     loadNextPageOfBooks()      // Add the next page of books
 })
 
+// Method to display singular book item in full
 ui.itemsList.addEventListener('click', (event) => {
     const pathArray = Array.from(event.path || event.composedPath())
     let active = null
@@ -178,6 +164,8 @@ ui.itemsList.addEventListener('click', (event) => {
         ui.bookDisplay.description.innerText = active.description
     }
 })
+/* ----- END: Setup app component functionality ----- */
+
 
 function toggleDisplayMode(mode){
     if (mode === 'night') {
@@ -259,3 +247,28 @@ function loadNextPageOfBooks(){
         <span class="list__remaining"> (${remainingBooks > 0 ? remainingBooks : 0})</span>
     `
 }
+
+function initializeBookConnect(){
+    // Load some books for display
+    loadNextPageOfBooks()
+
+    // Generate filter options from "authors" and "genres" arrays
+    ui.search.genreSelector.appendChild(
+        generateFilterOptionsFragment(genres, {value: "any", innerText: "All Genres"})
+    )
+    ui.search.authorSelector.appendChild(
+        generateFilterOptionsFragment(authors, {value: "any", innerText: "All Authors"})
+    )
+
+    // Check if user's browser requests "dark mode" by default
+    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        ui.settings.themeSelector.value = 'night'
+        toggleDisplayMode('night')
+    } else {
+        ui.settings.themeSelector.value = 'day'
+        toggleDisplayMode('day')
+    }
+}
+
+// Start App
+initializeBookConnect()
