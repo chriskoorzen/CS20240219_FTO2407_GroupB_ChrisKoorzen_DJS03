@@ -39,13 +39,11 @@ const ui = {
     },
 }
 
-let page = 1
+let page = 0
 let matches = books
 
 // Generate a list of books from initial data
-ui.itemsList.appendChild(
-    generateBookListFragment(matches, 0, BOOKS_PER_PAGE)
-)
+loadNextPageOfBooks(matches)
 
 const genreHtml = document.createDocumentFragment()
 const firstGenreElement = document.createElement('option')
@@ -87,14 +85,6 @@ if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').match
     document.documentElement.style.setProperty('--color-dark', '10, 10, 20')
     document.documentElement.style.setProperty('--color-light', '255, 255, 255')
 }
-
-ui.showMoreButton.innerText = `Show more (${books.length - BOOKS_PER_PAGE})`
-ui.showMoreButton.disabled = (matches.length - (page * BOOKS_PER_PAGE)) > 0
-
-ui.showMoreButton.innerHTML = `
-    <span>Show more</span>
-    <span class="list__remaining"> (${(matches.length - (page * BOOKS_PER_PAGE)) > 0 ? (matches.length - (page * BOOKS_PER_PAGE)) : 0})</span>
-`
 
 ui.search.cancelButton.addEventListener('click', () => {
     ui.search.modal.open = false
@@ -156,43 +146,24 @@ ui.search.form.addEventListener('submit', (event) => {
         }
     }
 
-    page = 1
-    matches = result
+    page = 0                                        // Reset the global variable
+    matches = result                                // Update global books reference
 
-    if (result.length < 1) {
-        // If no results are found, display the searchEmpty message overlay
+    if (result.length < 1) {                        // If no results are found, display a message overlay
         ui.searchEmptyMessage.classList.add('list__message_show')
-    } else {
-        // Hide this message
+    } else {                                        // Else, hide this message
         ui.searchEmptyMessage.classList.remove('list__message_show')
     }
 
-    // Clear booklist and generate a new set from results
-    ui.itemsList.innerHTML = ''
-    ui.itemsList.appendChild(
-        generateBookListFragment(result, 0, BOOKS_PER_PAGE)
-    )
+    loadNextPageOfBooks(result)
 
-    // Enable the button if there is more books to display
-    ui.showMoreButton.disabled = (matches.length - (page * BOOKS_PER_PAGE)) < 1
-
-    ui.showMoreButton.innerHTML = `
-        <span>Show more</span>
-        <span class="list__remaining"> (${(matches.length - (page * BOOKS_PER_PAGE)) > 0 ? (matches.length - (page * BOOKS_PER_PAGE)) : 0})</span>
-    `
-
-    // Go back to top of page
-    window.scrollTo({top: 0, behavior: 'smooth'})
+    window.scrollTo({top: 0, behavior: 'smooth'})   // Go back to top of page
     ui.search.modal.open = false
 })
 
 ui.showMoreButton.addEventListener('click', () => {
-
-    // Add the next page of books 
-    ui.itemsList.appendChild(
-        generateBookListFragment(matches, page * BOOKS_PER_PAGE, (page + 1) * BOOKS_PER_PAGE)
-    )
-    page += 1
+    page += 1                       // Increment global variable
+    loadNextPageOfBooks(matches)    // Add the next page of books
 })
 
 ui.itemsList.addEventListener('click', (event) => {
@@ -260,4 +231,23 @@ function generateBookListFragment(arrayOfBooks, startIndex, endIndex){
     }
 
     return container
+}
+
+function loadNextPageOfBooks(arrayOfBooks){
+
+    // If this is the first page, clear the booklist
+    if (page === 0) ui.itemsList.innerHTML = ''
+
+    // Add the next page of books 
+    ui.itemsList.appendChild(
+        generateBookListFragment(arrayOfBooks, page * BOOKS_PER_PAGE, (page + 1) * BOOKS_PER_PAGE)
+    )
+
+    // Update the showMoreButton button display
+    const remainingBooks = arrayOfBooks.length - ((page + 1) * BOOKS_PER_PAGE)
+    ui.showMoreButton.disabled = remainingBooks < 1
+    ui.showMoreButton.innerHTML = `
+        <span>Show more</span>
+        <span class="list__remaining"> (${remainingBooks > 0 ? remainingBooks : 0})</span>
+    `
 }
