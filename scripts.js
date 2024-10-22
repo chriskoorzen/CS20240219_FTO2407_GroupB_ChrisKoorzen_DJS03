@@ -77,6 +77,7 @@ for (const [id, name] of Object.entries(authors)) {
 
 ui.search.authorSelector.appendChild(authorsHtml)
 
+// Check if user's browser requests "dark mode" by default
 if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
     ui.settings.themeSelector.value = 'night'
     document.documentElement.style.setProperty('--color-dark', '255, 255, 255')
@@ -159,8 +160,10 @@ ui.search.form.addEventListener('submit', (event) => {
     matches = result
 
     if (result.length < 1) {
+        // If no results are found, display the searchEmpty message overlay
         ui.searchEmptyMessage.classList.add('list__message_show')
     } else {
+        // Hide this message
         ui.searchEmptyMessage.classList.remove('list__message_show')
     }
 
@@ -170,6 +173,7 @@ ui.search.form.addEventListener('submit', (event) => {
         generateBookListFragment(result, 0, BOOKS_PER_PAGE)
     )
 
+    // Enable the button if there is more books to display
     ui.showMoreButton.disabled = (matches.length - (page * BOOKS_PER_PAGE)) < 1
 
     ui.showMoreButton.innerHTML = `
@@ -177,6 +181,7 @@ ui.search.form.addEventListener('submit', (event) => {
         <span class="list__remaining"> (${(matches.length - (page * BOOKS_PER_PAGE)) > 0 ? (matches.length - (page * BOOKS_PER_PAGE)) : 0})</span>
     `
 
+    // Go back to top of page
     window.scrollTo({top: 0, behavior: 'smooth'})
     ui.search.modal.open = false
 })
@@ -194,21 +199,29 @@ ui.itemsList.addEventListener('click', (event) => {
     const pathArray = Array.from(event.path || event.composedPath())
     let active = null
 
+    // Traverse all the nodes from the event down to root
     for (const node of pathArray) {
         if (active) break
 
+        // If our node contains a "data-preview" attribute
+        // (meaning, we clicked on a book item, and not an empty space in the "itemsList" container)
         if (node?.dataset?.preview) {
             let result = null
-    
+
+            // Traverse the entire books list
             for (const singleBook of books) {
                 if (result) break
+
+                // if our node's "data-preview" attribute matches one of the books
+                // set to "result" and "active" (to break out of surrounding loops)
                 if (singleBook.id === node?.dataset?.preview) result = singleBook
             } 
         
             active = result
         }
     }
-    
+
+    // If an "active" book is set, display this book
     if (active) {
         ui.bookDisplay.modal.open = true
         ui.bookDisplay.background.src = active.image
