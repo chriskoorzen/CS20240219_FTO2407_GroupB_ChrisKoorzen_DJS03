@@ -48,8 +48,8 @@ let globalPage = 0
    Initialize with entire "book" data array. */
 let globalMatches = books
 
-// Generate a list of books from initial data
-loadNextPageOfBooks(globalMatches)
+// Load some books for display
+loadNextPageOfBooks()
 
 // Generate filter options from "authors" and "genres" arrays
 ui.search.genreSelector.appendChild(
@@ -131,15 +131,15 @@ ui.search.form.addEventListener('submit', (event) => {
         ui.searchEmptyMessage.classList.remove('list__message_show')
     }
 
-    loadNextPageOfBooks(result)                     // Load from results
+    loadNextPageOfBooks()                           // If not empty, this will load the selected books
 
     window.scrollTo({top: 0, behavior: 'smooth'})   // Go back to top of page
     ui.search.modal.open = false
 })
 
 ui.showMoreButton.addEventListener('click', () => {
-    globalPage += 1                         // Increment global variable
-    loadNextPageOfBooks(globalMatches)      // Add the next page of books
+    globalPage += 1            // Increment global variable
+    loadNextPageOfBooks()      // Add the next page of books
 })
 
 ui.itemsList.addEventListener('click', (event) => {
@@ -241,18 +241,18 @@ function generateBookListFragment(arrayOfBooks, startIndex, endIndex){
     return container
 }
 
-function loadNextPageOfBooks(arrayOfBooks){
+function loadNextPageOfBooks(){
 
     // If this is the first page, clear the booklist
     if (globalPage === 0) ui.itemsList.innerHTML = ''
 
     // Add the next page of books 
     ui.itemsList.appendChild(
-        generateBookListFragment(arrayOfBooks, globalPage * BOOKS_PER_PAGE, (globalPage + 1) * BOOKS_PER_PAGE)
+        generateBookListFragment(globalMatches, globalPage * BOOKS_PER_PAGE, (globalPage + 1) * BOOKS_PER_PAGE)
     )
 
     // Update the showMoreButton button display
-    const remainingBooks = arrayOfBooks.length - ((globalPage + 1) * BOOKS_PER_PAGE)
+    const remainingBooks = globalMatches.length - ((globalPage + 1) * BOOKS_PER_PAGE)
     ui.showMoreButton.disabled = remainingBooks < 1
     ui.showMoreButton.innerHTML = `
         <span>Show more</span>
