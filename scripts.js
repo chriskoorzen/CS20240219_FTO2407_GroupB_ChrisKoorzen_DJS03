@@ -42,14 +42,14 @@ const ui = {
 /* Do not load all book objects at once, but "page"
    through them at user's request. Keep track of 
    current "page" location. */
-let page = 0
+let globalPage = 0
 
 /* Reference to current array of book objects. 
    Initialize with entire "book" data array. */
-let matches = books
+let globalMatches = books
 
 // Generate a list of books from initial data
-loadNextPageOfBooks(matches)
+loadNextPageOfBooks(globalMatches)
 
 // Generate filter options from "authors" and "genres" arrays
 ui.search.genreSelector.appendChild(
@@ -122,8 +122,8 @@ ui.search.form.addEventListener('submit', (event) => {
         }
     }
 
-    page = 0                                        // Reset the global variable
-    matches = result                                // Update global books reference
+    globalPage = 0                                  // Reset the global variable
+    globalMatches = result                          // Update global books reference
 
     if (result.length < 1) {                        // If no results are found, display a message overlay
         ui.searchEmptyMessage.classList.add('list__message_show')
@@ -138,8 +138,8 @@ ui.search.form.addEventListener('submit', (event) => {
 })
 
 ui.showMoreButton.addEventListener('click', () => {
-    page += 1                       // Increment global variable
-    loadNextPageOfBooks(matches)    // Add the next page of books
+    globalPage += 1                         // Increment global variable
+    loadNextPageOfBooks(globalMatches)      // Add the next page of books
 })
 
 ui.itemsList.addEventListener('click', (event) => {
@@ -244,15 +244,15 @@ function generateBookListFragment(arrayOfBooks, startIndex, endIndex){
 function loadNextPageOfBooks(arrayOfBooks){
 
     // If this is the first page, clear the booklist
-    if (page === 0) ui.itemsList.innerHTML = ''
+    if (globalPage === 0) ui.itemsList.innerHTML = ''
 
     // Add the next page of books 
     ui.itemsList.appendChild(
-        generateBookListFragment(arrayOfBooks, page * BOOKS_PER_PAGE, (page + 1) * BOOKS_PER_PAGE)
+        generateBookListFragment(arrayOfBooks, globalPage * BOOKS_PER_PAGE, (globalPage + 1) * BOOKS_PER_PAGE)
     )
 
     // Update the showMoreButton button display
-    const remainingBooks = arrayOfBooks.length - ((page + 1) * BOOKS_PER_PAGE)
+    const remainingBooks = arrayOfBooks.length - ((globalPage + 1) * BOOKS_PER_PAGE)
     ui.showMoreButton.disabled = remainingBooks < 1
     ui.showMoreButton.innerHTML = `
         <span>Show more</span>
