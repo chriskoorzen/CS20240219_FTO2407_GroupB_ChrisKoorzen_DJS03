@@ -162,6 +162,23 @@ export const genres = {
   "64c4197d-5f8e-4bff-b440-6d19bc591fd9": "Magic"
 }
 
+/**
+ * @typedef {Object} Book
+ * @prop {string} id
+ * @prop {Array<string>} genres
+ * @prop {number} popularity
+ * @prop {string} title
+ * @prop {string} image
+ * @prop {string} description
+ * @prop {number} pages
+ * @prop {string} published
+ * @prop {string} author
+ */
+/**
+ * Array of "Book" objects containing information about published works
+ *
+ * @type {Book[]}
+ */
 export const books = [
   {
     "id": "760b3450-9c86-42d0-8eff-e793bf823756",

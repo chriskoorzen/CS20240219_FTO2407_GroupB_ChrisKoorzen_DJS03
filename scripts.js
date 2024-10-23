@@ -1,6 +1,12 @@
+/** @import { Book } from './data.js' */
 import { books, authors, genres, BOOKS_PER_PAGE } from './data.js'
 
-// Get reference to UI elements
+/**
+ * Reference to UI DOM elements. Nested objects also reference UI DOM elements, but represent a 
+ * semantic group or "path" to the elements.
+ * 
+ * @const {object}
+ */
 const ui = {
     // Main
     itemsList: document.querySelector('[data-list-items]'),
@@ -39,13 +45,23 @@ const ui = {
     },
 }
 
-/* Do not load all book objects at once, but "page"
-   through them at user's request. Keep track of 
-   current "page" location. */
+
+/**
+ * Keep track of current "page" location.
+ * Do not load all book objects at once, but "page"
+ * through them at user's request.
+ *
+ * @type {number}
+ */
 let globalPage = 0
 
-/* Reference to current array of book objects. 
-   Initialize with entire "book" data array. */
+
+/**
+ * Reference to current array of book objects. 
+ * Initialize with entire "book" data array.
+ *
+ * @type {Array<Book>}
+ */
 let globalMatches = books
 
 
@@ -167,6 +183,11 @@ ui.itemsList.addEventListener('click', (event) => {
 /* ----- END: Setup app component functionality ----- */
 
 
+/**
+ * Toggle the UI display between 'day' (light) and 'night' (dark) mode
+ *
+ * @param {'day' | 'night'} mode
+ */
 function toggleDisplayMode(mode){
     if (mode === 'night') {
         document.documentElement.style.setProperty('--color-dark', '255, 255, 255')
@@ -177,7 +198,15 @@ function toggleDisplayMode(mode){
     }
 }
 
-function generateFilterOptionsFragment(dataArray, defaultFirstValueProperties=null){
+
+/**
+ * Generate a collection of "option" Elements for use in a "select" element.
+ *
+ * @param {object} data An object with UUID keys and human readable strings as values.
+ * @param {?object} [defaultFirstValueProperties=null] An object with attributes (keys) and values for the first default option
+ * @returns {DocumentFragment} DocumentFragment containing generated "option" elements
+ */
+function generateFilterOptionsFragment(data, defaultFirstValueProperties=null){
     const container = document.createDocumentFragment()
 
     if (defaultFirstValueProperties){
@@ -189,7 +218,7 @@ function generateFilterOptionsFragment(dataArray, defaultFirstValueProperties=nu
         )
     }
 
-    for (const [id, name] of Object.entries(dataArray)) {
+    for (const [id, name] of Object.entries(data)) {
         const element = document.createElement('option')
         element.value = id
         element.innerText = name
@@ -199,11 +228,16 @@ function generateFilterOptionsFragment(dataArray, defaultFirstValueProperties=nu
     return container
 }
 
+
+/**
+ * Generate a collection of book display components
+ *
+ * @param {Array<Book>} arrayOfBooks An array containing Book objects
+ * @param {number} startIndex Starting index from which to generate components
+ * @param {number} endIndex End index from which to generate components
+ * @returns {DocumentFragment} DocumentFragment containing generated book UI components
+ */
 function generateBookListFragment(arrayOfBooks, startIndex, endIndex){
-    /* 
-      Generate a list of book display components from a section of an array 
-      containing book objects
-    */
     const container = document.createDocumentFragment()
 
     for (const { author, id, image, title } of arrayOfBooks.slice(startIndex, endIndex)) {
@@ -229,6 +263,8 @@ function generateBookListFragment(arrayOfBooks, startIndex, endIndex){
     return container
 }
 
+
+/** Updates the UI with the next set (if any) of Book UI components at the user's request */
 function loadNextPageOfBooks(){
 
     // If this is the first page, clear the booklist
@@ -248,6 +284,8 @@ function loadNextPageOfBooks(){
     `
 }
 
+
+/** Functions necessary to set up the starting state of the Application */
 function initializeBookConnect(){
     // Load some books for display
     loadNextPageOfBooks()
@@ -270,5 +308,5 @@ function initializeBookConnect(){
     }
 }
 
-// Start App
+// --- Start App ---
 initializeBookConnect()
